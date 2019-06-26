@@ -1,0 +1,7 @@
+== Run the Sample
+
+* Build the sample -> `./gradlew clean build`
+* Run UAA Server -> `./gradlew -b uaa-server/build.gradle uaa`
+* Run UI App -> `./gradlew -b ui-app/build.gradle bootRun`
+* Run Service A -> `./gradlew -b service-a/build.gradle bootRun`
+* Go to `http://localhost:8080` and login to UAA using *user1/password*

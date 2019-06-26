@@ -1,0 +1,5 @@
+rootProject.name = 'oauth2-client-nonblock'
+
+include 'uaa-server'
+include 'ui-app'
+include 'service-a'
