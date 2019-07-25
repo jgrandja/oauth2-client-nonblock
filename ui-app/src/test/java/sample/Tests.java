@@ -25,10 +25,8 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -58,7 +56,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -90,13 +87,12 @@ public class Tests {
 	@BeforeClass
 	public static void setUpBlockingChecks() {
 		// IMPORTANT:
-		// Before enabling BlockHound, we need to force the initialization of Jackson's internal cache
-		// as it attempts to load the manifest from 'jackson-databind-x.x.x.jar',
-		// which is a blocking I/O and therefore triggers BlockHound to error.
-		// The following code forces the initialization of the cache, which ultimately calls
-		// 'com.fasterxml.jackson.databind.DeserializationContext.hasValueDeserializerFor()'.
-		new MappingJackson2HttpMessageConverter().canRead(
-				new ParameterizedTypeReference<Map<String, Object>>() { }.getType(), null, null);
+		// Before enabling BlockHound, we need to force the initialization of
+		// java.lang.Package.defineSystemPackage(). When the JVM loads java.lang.Package.getSystemPackage(),
+		// it attempts to java.lang.Package.loadManifest() which is blocking I/O and triggers BlockHound to error.
+		// The following code forces the loading of the manifest.
+		// NOTE: This is an issue with JDK 8. It's been tested on JDK 10 and works fine w/o this workaround.
+//		Class.class.getPackage();
 
 		BlockHound.install();
 	}
